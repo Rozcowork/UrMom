@@ -5,9 +5,8 @@ public class PlayerController : MonoBehaviour
     //GLOBAL VARIABLES
     public Rigidbody2D playerBody;// Body of the Player
     public float playerSpeed = .009f; //Speed of the Player
-    public float jumpForce = 100;// Force applied to the jump
-    public bool isJumping = false; // At start the player is not jumping
-
+    public float jumpHeight = 2;// Force applied to the jump
+    public bool isGround;
     //"Flip" direction variables
     public bool flippedLeft; //Keep track of which way our sprite is currently facing
     public bool facingLeft; //Keep track of which way our sprite should be facing
@@ -47,13 +46,21 @@ public class PlayerController : MonoBehaviour
 
     private void Jump() //this private void is for the Player to Jump
     {
-        if (isJumping && Input.GetKeyUp(KeyCode.Space)) //if isJumping is true and you press "Spacebar" change position
+        if (Input.GetKeyDown(KeyCode.Space) && isGround) //if isJumping is true and you press "Spacebar" change position
         {
-            playerBody.AddForce(new Vector3(playerBody.linearVelocityX, jumpForce, 0)); //Add jump force to the player to change new vertical postion
-            isJumping = true; //change the boolean to true if the player is jumping
+            playerBody.AddForce(new Vector3(0, Mathf.Sqrt(2*jumpHeight*playerBody.gravityScale), 0),ForceMode2D.Impulse); //Add jump force to the player to change new vertical postion
+            isGround = false;
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Surface")
+        {
+            
+            isGround = true;
+        }
+    }
     void Flip(bool facingLeft) //this void flips the character
     {
         if (facingLeft && !flippedLeft) //if facingLeft is true and the flippedLeft is false rotate the player
