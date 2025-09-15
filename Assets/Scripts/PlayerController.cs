@@ -5,8 +5,10 @@ public class PlayerController : MonoBehaviour
     //GLOBAL VARIABLES
     public Rigidbody2D playerBody;// Body of the Player
     public float playerSpeed = .009f; //Speed of the Player
-    public float jumpHeight = 2;// Force applied to the jump
-    public bool isGround;
+    public float jumpHeight = 15;// Force applied to the jump
+    public bool isGround; //To check if player has contact with the ground
+    private Vector3 currentRespawnPoint;
+
     //"Flip" direction variables
     public bool flippedLeft; //Keep track of which way our sprite is currently facing
     public bool facingLeft; //Keep track of which way our sprite should be facing
@@ -14,7 +16,7 @@ public class PlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        currentRespawnPoint = transform.position;
     }
 
     // Update is called once per frame
@@ -22,6 +24,19 @@ public class PlayerController : MonoBehaviour
     {
         MovePlayer(); //call MovePlayer constantly
         Jump(); //call Jump constantly
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.CompareTag("FallDetector"))
+        {
+            transform.position = currentRespawnPoint;
+        }
+    }
+
+    public void SetRespawnPoint(Vector3 newPoint)
+    {
+        currentRespawnPoint = newPoint;
     }
 
     private void MovePlayer() //this private void is to move the player
@@ -40,6 +55,12 @@ public class PlayerController : MonoBehaviour
             facingLeft = false; //set the boolean to false when facing right
             Flip(facingLeft); //call the Flip Facing left void
         }
+
+        //else if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D))
+        //{
+            //newPos = Vector3.zero;
+            //Debug.Log("Not Moving");
+        //}
 
         transform.position = newPos; //close the loop of the if statements to move player
     }
