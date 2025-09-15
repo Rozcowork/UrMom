@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -8,8 +9,11 @@ public class PlayerController : MonoBehaviour
     public float jumpHeight = 15;// Force applied to the jump
     public bool isGround; //To check if player has contact with the ground
     private Vector3 currentRespawnPoint;
+    public SpriteRenderer visual;
+    public bool isFlipped;
+    private Coroutine flipCoroutine;
 
-    //"Flip" direction variables
+    //"Flip" Facing direction variables
     public bool flippedLeft; //Keep track of which way our sprite is currently facing
     public bool facingLeft; //Keep track of which way our sprite should be facing
 
@@ -24,6 +28,11 @@ public class PlayerController : MonoBehaviour
     {
         MovePlayer(); //call MovePlayer constantly
         Jump(); //call Jump constantly
+        
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            InvisbleFlip(!isFlipped);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -36,6 +45,7 @@ public class PlayerController : MonoBehaviour
 
     public void SetRespawnPoint(Vector3 newPoint)
     {
+        Debug.Log(newPoint.ToString());
         currentRespawnPoint = newPoint;
     }
 
@@ -56,11 +66,10 @@ public class PlayerController : MonoBehaviour
             Flip(facingLeft); //call the Flip Facing left void
         }
 
-        //else if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D))
-        //{
-            //newPos = Vector3.zero;
-            //Debug.Log("Not Moving");
-        //}
+        else if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D))
+        {
+            Debug.Log("Not Moving");
+        }
 
         transform.position = newPos; //close the loop of the if statements to move player
     }
@@ -74,9 +83,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision) //when the player collides with this object
     {
-        if (collision.gameObject.tag == "Surface")
+        if (collision.gameObject.tag == "Surface") //if the player collides with the object called surface
         {
             
             isGround = true;
@@ -86,14 +95,56 @@ public class PlayerController : MonoBehaviour
     {
         if (facingLeft && !flippedLeft) //if facingLeft is true and the flippedLeft is false rotate the player
         {
-            transform.Rotate(0, -180, 0); //change the way the player is facing to the left
+            visual.flipX = true; //change the way the player is facing to the left
             flippedLeft = true; //set the boolean to true
         }
 
         if (flippedLeft && !facingLeft) //if flippedLeft is true and the facingLeft is false rotate the plaer
         {
-            transform.Rotate(0, 180, 0); //change the way the player is facing to the right
+            visual.flipX = false; //change the way the player is facing to the right
             flippedLeft = false; //set the boolean to false
         }
+    }
+
+    IEnumerator FlipCoroutine(bool isFlipped)
+    {
+        this.isFlipped = isFlipped; //sets the global variable
+        if (isFlipped)
+        {
+            float rotation = 0; // Start at 0
+            float duration = 1; // Finish at 1 sec
+            for (float time = 0; time < duration; time += Time.deltaTime) //over the time rotate to 90
+            {
+                rotation = time / duration * 90; //fraction we are till 90 based on our time
+                visual.transform.localRotation = Quaternion.Euler(0, rotation, 0); //setting our rotation
+                yield return null; //wait 1 Frame
+            }
+            visual.transform.localRotation = Quaternion.Euler(0, 90, 0); //set new rotation to 90
+        }
+
+        else
+        {
+            float rotation = 90; //Start at 90
+            float duration = 1; //Finsih at 1 sec
+            for (float time = 0; time < duration; time += Time.deltaTime) //over the time rotate 
+            {
+                rotation = 90 - time / duration * 90; //90 minus the fraction we are till we are the original position
+                visual.transform.localRotation = Quaternion.Euler(0, rotation, 0); //setting our rotation
+                yield return null; //wait 1 Frame
+            }
+            visual.transform.localRotation = Quaternion.Euler(0, 0, 0); //set new rotation to original
+        }
+
+        flipCoroutine = null; //end the coroutine
+    }
+
+    void InvisbleFlip(bool isFlipped)
+    {
+        if (flipCoroutine != null)
+        {
+            StopCoroutine(flipCoroutine); // Cancel all existing coroutines
+            flipCoroutine = null;
+        }
+        flipCoroutine = StartCoroutine(FlipCoroutine(isFlipped));
     }
 }
