@@ -16,14 +16,14 @@ public class Checkpoint : MonoBehaviour
         
     }
 
-    public void OnTriggerEnter2D(Collider2D other)
+    public void OnTriggerEnter2D(Collider2D other) //when any pbject collides with the trigger of this object 
     {
-        if(other.CompareTag("Player"))
+        if(other.CompareTag("Player")) //if that object is the Player
         {
-            PlayerController playerRespawn = other.GetComponent<PlayerController>();
-            if (playerRespawn != null)
+            PlayerController playerRespawn = other.GetComponent<PlayerController>(); // grab the player controller script from the object
+            if (playerRespawn != null) //if the player controller script exists on that object
             {
-                playerRespawn.SetRespawnPoint(transform.position);
+                playerRespawn.SetRespawnPoint(transform.position); //set the players new Respawn position to the chackpoint
             }
         }
     }
