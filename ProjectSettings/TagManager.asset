@@ -7,6 +7,7 @@ TagManager:
   - Surface
   - FallDetector
   - Checkpoint
+  - Obstacle
   layers:
   - Default
   - TransparentFX

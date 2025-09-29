@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public bool isFlipped; //boolean for the invisible flip
     private Coroutine flipCoroutine; //find private flip coroutine
     public bool isMoving; //boolean to check if player is moving
+    private bool previousIsMoving;
 
     //"Flip" Facing direction variables
     public bool flippedLeft; //Keep track of which way our sprite is currently facing
@@ -30,19 +31,8 @@ public class PlayerController : MonoBehaviour
     {
         MovePlayer(); //call MovePlayer constantly
         Jump(); //call Jump constantly
-        
-        if (Input.GetKeyDown(KeyCode.E)) //if you press "E" start flip
-        {
-            InvisbleFlip(!isFlipped); //Cancel & Call the invisble flip coroutine
-        }
-    }
 
-    void OnTriggerEnter2D(Collider2D other) //trigger this object when anything collides with it 
-    {
-        if(other.CompareTag("FallDetector")) //if you collide with the "Fall Detector"
-        {
-            transform.position = currentRespawnPoint; //respawn at the NEXT current respawn point
-        }
+       
     }
 
     public void SetRespawnPoint(Vector3 newPoint) //setting position of checkpoint
@@ -54,25 +44,26 @@ public class PlayerController : MonoBehaviour
     private void MovePlayer() //this private void is to move the player
     {
         Vector3 newPos = transform.position; //Current position of the player
-      
+
         if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D)) //if you press "A" and not "D" change position 
         {
             newPos.x -= playerSpeed; //When "A" is pressed go Left
             facingLeft = true; //set the boolean to true when facing left
             Flip(facingLeft); //call the Flip Facing Left void
-            isMoving = true; //change moving boolean to true
+            ChangeMoving(true); //change moving boolean to true
         }
         else if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A)) //if you press "D" and "A" change position
         {
             newPos.x += playerSpeed; //when "D" is pressed go right
             facingLeft = false; //set the boolean to false when facing right
             Flip(facingLeft); //call the Flip Facing left void
-            isMoving = true; //change moving boolean to true
+            ChangeMoving(true); //change moving boolean to true
         }
 
         else  //If both A & D are pressed simultaneously or you're not pressing anything
         {
-            isMoving = false; //change moving boolean to false
+            
+            ChangeMoving(false); //change moving boolean to false
 
         }
 
@@ -83,7 +74,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) && isGround) //if isJumping is true and you press "Spacebar" change position
         {
-            playerBody.AddForce(new Vector3(0, Mathf.Sqrt(2*jumpHeight*playerBody.gravityScale), 0),ForceMode2D.Impulse); //Add jump force to the player to change new vertical postion
+            playerBody.AddForce(new Vector3(0, Mathf.Sqrt(2 * jumpHeight * playerBody.gravityScale), 0), ForceMode2D.Impulse); //Add jump force to the player to change new vertical postion
             isGround = false; //change boolean to false so you are unable to jump
         }
     }
@@ -92,7 +83,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Surface") //when you collide with the object named Surface
         {
-            
+
             isGround = true; //change boolean to true so you can jump again
         }
     }
@@ -111,16 +102,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator FlipCoroutine(bool isFlipped) 
+    IEnumerator FlipCoroutine(bool isFlipped)
     {
         this.isFlipped = isFlipped; //sets the global variable
         if (isFlipped)
         {
-            float rotation = 0; // Start at 0
+            float startRotation = visual.transform.localRotation.eulerAngles.y; // Start at your current rotation
             float duration = 1; // Finish at 1 sec
             for (float time = 0; time < duration; time += Time.deltaTime) //over the time rotate to 90
             {
-                rotation = time / duration * 90; //fraction we are till 90 based on our time
+                float rotation = time / duration * (90 - startRotation) + startRotation; //fraction we are between our start and 90 based on our time
                 visual.transform.localRotation = Quaternion.Euler(0, rotation, 0); //setting our rotation
                 yield return null; //wait 1 Frame
             }
@@ -129,11 +120,11 @@ public class PlayerController : MonoBehaviour
 
         else
         {
-            float rotation = 90; //Start at 90
+            float startRotation = visual.transform.localRotation.eulerAngles.y; //Start at your current rotation
             float duration = 1; //Finsih at 1 sec
             for (float time = 0; time < duration; time += Time.deltaTime) //over the time rotate back to original state
             {
-                rotation = 90 - time / duration * 90; //90 minus the fraction we are till we are the original position
+                float rotation = 90 - (time / duration * (90 - startRotation) + startRotation); //90 minus the fraction we are till we are the original position
                 visual.transform.localRotation = Quaternion.Euler(0, rotation, 0); //setting our rotation
                 yield return null; //wait 1 Frame
             }
@@ -152,5 +143,34 @@ public class PlayerController : MonoBehaviour
         }
 
         flipCoroutine = StartCoroutine(FlipCoroutine(isFlipped)); //store the new coroutine and start
+    }
+
+    public void Respawn() //Respawn the player at the current respawn
+    {
+        transform.position = currentRespawnPoint; //change position of the player to the current respawn point
+    }
+
+    private void ChangeMoving(bool newIsMoving) //this function is called everyframe
+    {
+        isMoving = newIsMoving; //Update the current
+        if (isMoving != previousIsMoving) //if your current isMoving is different from previous
+        {
+            previousIsMoving = isMoving; //Update the previous isMoving to current
+            OnMoveChange(isMoving); //Call the OnMoveChange the instant that isMoving changes
+        }
+    }
+
+    private void OnMoveChange(bool newIsMoving) //called once
+    {
+        if (newIsMoving) //if you start moving then flip to normal
+        {
+            InvisbleFlip(false); 
+            //Debug.Log("Moving");
+        }
+        else //if you stop moving then flip to Invisible
+        {
+            InvisbleFlip(true); 
+            //Debug.Log("Stopped");
+        }
     }
 }
