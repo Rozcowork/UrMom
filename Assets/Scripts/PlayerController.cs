@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -12,9 +13,9 @@ public class PlayerController : MonoBehaviour
     private Vector3 currentRespawnPoint; //find the position of current respawn point
     public SpriteRenderer visual; //find the sprite renderer visual
     public bool isFlipped; //boolean for the invisible flip
-    private Coroutine flipCoroutine; //find private flip coroutine
     public bool isMoving; //boolean to check if player is moving
     private bool previousIsMoving;
+    public float invisibleFlipDuration = 1;
 
     //"Flip" Facing direction variables
     public bool flippedLeft; //Keep track of which way our sprite is currently facing
@@ -102,47 +103,22 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator FlipCoroutine(bool isFlipped)
-    {
-        this.isFlipped = isFlipped; //sets the global variable
-        if (isFlipped)
-        {
-            float startRotation = visual.transform.localRotation.eulerAngles.y; // Start at your current rotation
-            float duration = 1; // Finish at 1 sec
-            for (float time = 0; time < duration; time += Time.deltaTime) //over the time rotate to 90
-            {
-                float rotation = time / duration * (90 - startRotation) + startRotation; //fraction we are between our start and 90 based on our time
-                visual.transform.localRotation = Quaternion.Euler(0, rotation, 0); //setting our rotation
-                yield return null; //wait 1 Frame
-            }
-            visual.transform.localRotation = Quaternion.Euler(0, 90, 0); //set new rotation to 90
-        }
-
-        else
-        {
-            float startRotation = visual.transform.localRotation.eulerAngles.y; //Start at your current rotation
-            float duration = 1; //Finsih at 1 sec
-            for (float time = 0; time < duration; time += Time.deltaTime) //over the time rotate back to original state
-            {
-                float rotation = 90 - (time / duration * (90 - startRotation) + startRotation); //90 minus the fraction we are till we are the original position
-                visual.transform.localRotation = Quaternion.Euler(0, rotation, 0); //setting our rotation
-                yield return null; //wait 1 Frame
-            }
-            visual.transform.localRotation = Quaternion.Euler(0, 0, 0); //set new rotation to original state
-        }
-
-        flipCoroutine = null; //end the coroutine
-    }
+    
 
     void InvisbleFlip(bool isFlipped) //Cancels any current flip and starts a new one
     {
-        if (flipCoroutine != null) //if there is a flip happening right now
+       
+        DOTween.Kill(visual.transform); //Kill any exisiting Flip Tween
+
+        if (isFlipped) //if we want to be flipped
         {
-            StopCoroutine(flipCoroutine); // Cancel that existing coroutine
-            flipCoroutine = null; //also making sure no coroutine is stored
+            visual.transform.DOLocalRotate(new Vector3(0, 90, 0), invisibleFlipDuration); //Rotate smoothly to 90 degrees
         }
 
-        flipCoroutine = StartCoroutine(FlipCoroutine(isFlipped)); //store the new coroutine and start
+        else //if you do not want to be flipped
+        {
+            visual.transform.DOLocalRotate(new Vector3(0, 0, 0), invisibleFlipDuration); //Rotate smoothly to default
+        }
     }
 
     public void Respawn() //Respawn the player at the current respawn
