@@ -679,6 +679,9 @@ MonoBehaviour:
   visual: {fileID: 827118106}
   isFlipped: 0
   isMoving: 0
+  invisibleFlipDuration: 1
+  invisibleFlipStartDelay: 1
+  isInvisibleFlip: 0
   flippedLeft: 0
   facingLeft: 0
 --- !u!4 &1319930850
@@ -902,6 +905,67 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9def78d34ae39cd4c909fb10c5fc245a, type: 3}
+--- !u!1001 &8175579925175645473
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3199155311753818807, guid: 9053fb6f9fef35042a221c37ee4b0fed, type: 3}
+      propertyPath: m_Name
+      value: LaserObstacle
+      objectReference: {fileID: 0}
+    - target: {fileID: 4051269502015761342, guid: 9053fb6f9fef35042a221c37ee4b0fed, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4051269502015761342, guid: 9053fb6f9fef35042a221c37ee4b0fed, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -12.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4051269502015761342, guid: 9053fb6f9fef35042a221c37ee4b0fed, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.0829
+      objectReference: {fileID: 0}
+    - target: {fileID: 4051269502015761342, guid: 9053fb6f9fef35042a221c37ee4b0fed, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4051269502015761342, guid: 9053fb6f9fef35042a221c37ee4b0fed, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4051269502015761342, guid: 9053fb6f9fef35042a221c37ee4b0fed, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4051269502015761342, guid: 9053fb6f9fef35042a221c37ee4b0fed, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4051269502015761342, guid: 9053fb6f9fef35042a221c37ee4b0fed, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4051269502015761342, guid: 9053fb6f9fef35042a221c37ee4b0fed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4051269502015761342, guid: 9053fb6f9fef35042a221c37ee4b0fed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4051269502015761342, guid: 9053fb6f9fef35042a221c37ee4b0fed, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9053fb6f9fef35042a221c37ee4b0fed, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -911,3 +975,4 @@ SceneRoots:
   - {fileID: 1929577258}
   - {fileID: 710083372}
   - {fileID: 2888547677768655570}
+  - {fileID: 8175579925175645473}
