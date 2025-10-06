@@ -14,8 +14,10 @@ public class PlayerController : MonoBehaviour
     public SpriteRenderer visual; //find the sprite renderer visual
     public bool isFlipped; //boolean for the invisible flip
     public bool isMoving; //boolean to check if player is moving
-    private bool previousIsMoving;
-    public float invisibleFlipDuration = 1;
+    private bool previousIsMoving; //boolean to check if there is movement or not
+    public float invisibleFlipDuration = 1; //The amount of time taken for the player to become invisble
+    public float invisibleFlipStartDelay = 1; //The amount of time taken before the InvisbleFlip starts
+    public bool isInvisibleFlip = false; //boolean to track if player is Invisible
 
     //"Flip" Facing direction variables
     public bool flippedLeft; //Keep track of which way our sprite is currently facing
@@ -24,6 +26,7 @@ public class PlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        OnMoveChange(isMoving); //
         currentRespawnPoint = transform.position; //spawn at the current position
     }
 
@@ -112,12 +115,16 @@ public class PlayerController : MonoBehaviour
 
         if (isFlipped) //if we want to be flipped
         {
-            visual.transform.DOLocalRotate(new Vector3(0, 90, 0), invisibleFlipDuration); //Rotate smoothly to 90 degrees
+            visual.transform.DOLocalRotate(new Vector3(0, 90, 0), invisibleFlipDuration).OnComplete( () => 
+            {
+                isInvisibleFlip = true; //After the flip is complete set our tracker variable true
+            }); //Rotate smoothly to 90 degrees
         }
 
         else //if you do not want to be flipped
         {
             visual.transform.DOLocalRotate(new Vector3(0, 0, 0), invisibleFlipDuration); //Rotate smoothly to default
+            isInvisibleFlip = false; //Set our tracker variable false when we stop moving
         }
     }
 
@@ -145,7 +152,11 @@ public class PlayerController : MonoBehaviour
         }
         else //if you stop moving then flip to Invisible
         {
-            InvisbleFlip(true); 
+            DOTween.Kill("Flip Delay");
+            DOVirtual.DelayedCall(invisibleFlipStartDelay, () =>
+            {
+                InvisbleFlip(true);
+            }).SetId("Flip Delay"); //After the Start Delay Call the invisible flip function
             //Debug.Log("Stopped");
         }
     }
