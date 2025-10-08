@@ -13,6 +13,7 @@ public class Laser : MonoBehaviour
     {
         
     }
+
     public void OnTriggerEnter2D(Collider2D other) //when any pbject collides with the trigger of this object 
     {
         if (other.CompareTag("Player")) //if that object is the Player
@@ -20,7 +21,7 @@ public class Laser : MonoBehaviour
             PlayerController playerRespawn = other.GetComponent<PlayerController>(); // grab the player controller script from the object
             if (playerRespawn != null) //if the player controller script exists on that object
             {
-                playerRespawn.Respawn(); //Respawn the player
+                playerRespawn.TryKillPlayer(); //Respawn the player
             }
         }
     }

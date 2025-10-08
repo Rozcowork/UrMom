@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     public float invisibleFlipDuration = 1; //The amount of time taken for the player to become invisble
     public float invisibleFlipStartDelay = 1; //The amount of time taken before the InvisbleFlip starts
     public bool isInvisibleFlip = false; //boolean to track if player is Invisible
+    public BoxCollider2D boxCollider2D; //find the box collider on the player
 
     //"Flip" Facing direction variables
     public bool flippedLeft; //Keep track of which way our sprite is currently facing
@@ -119,6 +120,7 @@ public class PlayerController : MonoBehaviour
             {
                 isInvisibleFlip = true; //After the flip is complete set our tracker variable true
             }); //Rotate smoothly to 90 degrees
+            //DOTween.To(boxCollider2D.size.x, newX => { boxCollider2D.size = new Vector2(newX, boxCollider2D.size.y); }, 0.05f, invisibleFlipDuration * .95f);
         }
 
         else //if you do not want to be flipped
@@ -128,7 +130,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void Respawn() //Respawn the player at the current respawn
+    public void TryKillPlayer() //Attempting to kill the player if not flipped invisble
+    {
+        if (isInvisibleFlip) //if is InvisibleFlip is true
+        {
+            return; //stop anything below
+        }
+
+        KillPlayer();// Kills Player if not invisible
+    }
+
+    public void KillPlayer()// Directly Kills player
     {
         transform.position = currentRespawnPoint; //change position of the player to the current respawn point
     }
@@ -147,6 +159,7 @@ public class PlayerController : MonoBehaviour
     {
         if (newIsMoving) //if you start moving then flip to normal
         {
+            DOTween.Kill("Flip Delay");
             InvisbleFlip(false); 
             //Debug.Log("Moving");
         }

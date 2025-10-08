@@ -21,7 +21,7 @@ public class FallDetector : MonoBehaviour
             PlayerController playerRespawn = other.GetComponent<PlayerController>(); // grab the player controller script from the object
             if (playerRespawn != null) //if the player controller script exists on that object
             {
-                playerRespawn.Respawn(); //Respawn the player
+                playerRespawn.KillPlayer(); //Respawn the player
             }
         }
     }
