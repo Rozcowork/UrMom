@@ -8,6 +8,7 @@ TagManager:
   - FallDetector
   - Checkpoint
   - Obstacle
+  - BreakableWall
   layers:
   - Default
   - TransparentFX

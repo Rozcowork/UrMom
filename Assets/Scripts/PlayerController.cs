@@ -119,6 +119,7 @@ public class PlayerController : MonoBehaviour
             visual.transform.DOLocalRotate(new Vector3(0, 90, 0), invisibleFlipDuration).OnComplete( () => 
             {
                 isInvisibleFlip = true; //After the flip is complete set our tracker variable true
+                playerBody.linearVelocity = new Vector2(playerBody.linearVelocity.x, -1f); // small downward force for the fall-through platforms
             }); //Rotate smoothly to 90 degrees
             //DOTween.To(boxCollider2D.size.x, newX => { boxCollider2D.size = new Vector2(newX, boxCollider2D.size.y); }, 0.05f, invisibleFlipDuration * .95f);
         }
